@@ -1,4 +1,4 @@
-name := """bridge-to-db"""
+name := """mimic-project-manager"""
 
 version := "1.1"
 
@@ -6,7 +6,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.11.8"
 
-organization := "motivtelecom.ru"
+organization := "avgolubev"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation")
 
@@ -30,6 +30,3 @@ resolvers ++= Seq(
 
 fork in run := false
 offline := false
-
-
-
