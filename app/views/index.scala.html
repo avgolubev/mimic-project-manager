@@ -1,0 +1,63 @@
+@*
+ * This template takes a single argument, a String containing a
+ * message to display.
+ *@
+ 
+@(login: String)
+ 
+
+
+@*
+ * Call the `main` template with two arguments. The first
+ * argument is a `String` with the title of the page, the second
+ * argument is an `Html` object containing the body of the page.
+ *@
+ 
+@main("Управление проектами jira.") {
+  
+<div ng-controller='IssuesController as ctrl'>  
+  
+  <div class="container-fluid">
+
+    <p>Пользователь @login</p>
+
+    <p>{{ctrl.error}}</p>
+
+    <br>
+    <p>Выход из приложения</p>
+      @helper.form(action = routes.Authentication.logout) {
+         <p>
+           <button type="submit">Выйти</button>
+         </p>
+      }
+
+      <div class="form-group narrow-button">
+        <button class="btn btn-primary" ng-click="ctrl.refreshIssues();">
+          Обновить</button>
+      </div>
+      
+      <div class="checkbox">
+        <label><input type="checkbox" ng-model="ctrl.showAll" value=""> Показывать задачи в статусе «Закрыта», скрытые после экспорта. </label>
+      </div>
+     <div class="dropdown">
+      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Экспорт в файл
+      <span class="caret"></span></button>
+      <ul class="dropdown-menu">
+        <li><a href="#" ng-click="ctrl.exportIssues('all');">Excel(всё)</a></li>
+        <li><a href="#" ng-click="ctrl.exportIssues('notempty');">Excel(даты не пустые)</a></li>
+        <li><a href="#">MSPDI (чуть позже)</a></li>
+      </ul>
+    </div>   
+  </div>	
+  <br>
+  <div class="container-fluid">  
+    <issues-table items="ctrl.getIssues().issues" 
+		  on-changes="ctrl.prepareChanges(task_id, field, data)" 
+		  on-cancel="ctrl.cancelChanges()"
+		  on-save="ctrl.saveChanges()" 
+		  on-hide="ctrl.hideIssue(task_id)"></issues-table>
+  </div>
+</div>
+
+}
+

@@ -1,0 +1,20 @@
+
+GET     /                      controllers.Application.index
+
+GET     /issues               controllers.Application.issues
+
+GET     /report/*filter        controllers.Application.report(filter: String)
+
+PUT     /savechanges           controllers.Application.saveChanges
+
+PUT     /hideissue             controllers.Application.hideIssue
+
+GET     /login                 controllers.Authentication.login
+
+POST    /login                 controllers.Authentication.authenticate
+
+POST    /logout                controllers.Authentication.logout
+GET     /logout                controllers.Authentication.logout
+
+# Map static resources from the /public folder to the / URL path
+GET     /assets/*file                 controllers.Assets.at(path="/public", file)

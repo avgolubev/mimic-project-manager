@@ -1,0 +1,23 @@
+{
+  "name": "jira_front_end",
+  "description": "",
+  "main": "app.js",
+  "authors": [
+    "it_andrei"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "latest",
+    "angular-xeditable": "latest",
+    "angular-bootstrap": "latest",
+    "bootstrap": "latest"
+  }
+}

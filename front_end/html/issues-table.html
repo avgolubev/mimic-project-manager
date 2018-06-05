@@ -1,0 +1,83 @@
+<form editable-form name="issuesTableForm" onbeforesave="$ctrl.saveChanges()" oncancel="$ctrl.cancel()">
+
+  <div class="btn-edit">
+    <button type="button" class="btn btn-default" ng-show="!issuesTableForm.$visible" ng-click="issuesTableForm.$show()">
+      редактировать
+    </button>
+  </div>
+  <div class="btn-form" ng-show="issuesTableForm.$visible">
+    <button type="submit" ng-disabled="issuesTableForm.$waiting" class="btn btn-primary">сохранить</button>
+    <button type="button" ng-disabled="issuesTableForm.$waiting" ng-click="issuesTableForm.$cancel()" class="btn btn-default">отменить</button>
+  </div>
+
+	<table class="table table-bordered table-hover table-condensed">
+
+	  <caption>
+	    Список задач Jira
+	  </caption>
+
+	  <tr>
+	    <th width="5%">№ п/п</th>
+	    <th width="5%"><a href=# ng-click="$ctrl.sortBy('task_id')"> Задача в Jira </a>
+        <span class="sortorder" ng-show="$ctrl.sortItem === 'task_id'" ng-class="{reverse: $ctrl.reverse}"></span></th>
+	    <th width="25%"><a href=# ng-click="$ctrl.sortBy('title')"> Название задачи </a>
+        <span class="sortorder" ng-show="$ctrl.sortItem === 'title'" ng-class="{reverse: $ctrl.reverse}"></span></th>
+	    <th width="5%"><a href=# ng-click="$ctrl.sortBy('status')"> Статус задачи </a>
+        <span class="sortorder" ng-show="$ctrl.sortItem === 'status'" ng-class="{reverse: $ctrl.reverse}"></span></th>
+	    <th width="10%"><a href=# ng-click="$ctrl.sortBy('start_date')"> Начало </a>
+        <span class="sortorder" ng-show="$ctrl.sortItem === 'start_date'" ng-class="{reverse: $ctrl.reverse}"></span></th>
+	    <th width="10%"><a href=# ng-click="$ctrl.sortBy('end_date')"> Окончание </a>
+        <span class="sortorder" ng-show="$ctrl.sortItem === 'end_date'" ng-class="{reverse: $ctrl.reverse}"></span></th>
+	    <th width="10%"><a href=# ng-click="$ctrl.sortBy('executors')"> Названия ресурсов </a>
+        <span class="sortorder" ng-show="$ctrl.sortItem === 'executors'" ng-class="{reverse: $ctrl.reverse}"></span></th>
+	    <th width="10%"><a href=# ng-click="$ctrl.sortBy('customer')"> Контактное лицо </a>
+        <span class="sortorder" ng-show="$ctrl.sortItem === 'customer'" ng-class="{reverse: $ctrl.reverse}"></span></th>
+	    <th width="10%"><a href=# ng-click="$ctrl.sortBy('ord')"> ОРД </a>
+        <span class="sortorder" ng-show="$ctrl.sortItem === 'ord'" ng-class="{reverse: $ctrl.reverse}"></span></th>
+	    <th width="5%"><a href=# ng-click="$ctrl.sortBy('progress')"> % завершения </a>
+        <span class="sortorder" ng-show="$ctrl.sortItem === 'progress'" ng-class="{reverse: $ctrl.reverse}"></span></th>
+      <th width="5%">скрыть</th>
+	  </tr>
+
+	  <tr ng-repeat="item in $ctrl.items | orderBy:$ctrl.sortItem:$ctrl.reverse track by item.task_id">
+	    <td>{{$index + 1}}</td>
+	    <td><a href="https://jira.corp.motiv/browse/{{item.task_id}}" target="_blank"> {{item.task_id}} </a></td>
+	    <td>{{item.title}}</td>
+	    <td>{{item.status}}</td>
+
+	    <td><span editable-bsdate="item.start_date"
+                e-form="issuesTableForm"
+                e-is-open="$ctrl.openedStart[$index]"
+                e-ng-click="$ctrl.openStart($event, $index)"
+                e-datepicker-popup="dd.MM.yyyy"
+                e-ng-change="$ctrl.prepareChanges(item.task_id, 'start_date', $data)"
+                e-style="font-size: 12px;">
+          {{ (item.start_date | date:"dd.MM.yyyy")  || "" }} </span></td>
+	    <td><span editable-bsdate="item.end_date"
+                e-form="issuesTableForm"
+                e-is-open="$ctrl.openedEnd[$index]"
+                e-ng-click="$ctrl.openEnd($event, $index)"
+                e-datepicker-popup="dd.MM.yyyy"
+                e-ng-change="$ctrl.prepareChanges(item.task_id, 'end_date', $data)"
+                e-style="font-size: 12px;">
+	      {{ (item.end_date | date:"dd.MM.yyyy")  || "" }} </span></td>
+	    <td><span editable-text="item.executors" e-form="issuesTableForm"
+                e-ng-change="$ctrl.prepareChanges(item.task_id, 'executors', $data)">
+        {{ item.executors || "" }}</span></td>
+	    <td><span editable-text="item.customer" e-form="issuesTableForm"
+                e-ng-change="$ctrl.prepareChanges(item.task_id, 'customer', $data)">
+        {{ item.customer || "" }}</span></td>
+	    <td><span editable-text="item.ord" e-form="issuesTableForm"
+                e-ng-change="$ctrl.prepareChanges(item.task_id, 'ord', $data)">
+        {{ item.ord || "" }}</span></td>
+	    <td><span editable-text="item.progress" e-form="issuesTableForm"  e-type="number" e-max="100" e-required
+                e-ng-change="$ctrl.prepareChanges(item.task_id, 'progress', $data)">
+        {{ item.progress || 0 }}</span></td>
+
+      <td><a href=# ng-click="$ctrl.hideIssue(item.task_id)"> скрыть </a></td>
+
+	  </tr>
+
+	</table>
+
+</form>

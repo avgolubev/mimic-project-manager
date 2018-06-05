@@ -1,0 +1,36 @@
+@(loginForm: Form[Option[Account]])(notAuth: Boolean)
+
+<html>
+	<head>
+	    <title>Login</title>
+	    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+	    <link href="@routes.Assets.at("stylesheets/lib/bootstrap.min.css")" rel="stylesheet">
+	</head>
+	<body>
+	    <header>
+	        <a href="@routes.Application.index" id="logo"><span>Главная страница</span></a>
+	    </header>
+
+  <div class="text-center center-block">        
+		@helper.form(routes.Authentication.authenticate) {
+		   <h1>Вход в приложение</h1>
+		   	
+		   <p>
+		     <input type="text" name="userName" placeholder="User name" value="@loginForm("userName").value">
+		   </p>
+		   <p>
+		     <input type="password" name="password" placeholder="Password">
+		   </p>
+		   <p>
+		     <button type="submit">Войти</button>
+		   </p>
+		}
+		
+		@if(notAuth) {
+		 <p> Неверное имя пользователя или пароль </p>
+		}   
+	</div>
+	        
+
+    </body>
+</html>
