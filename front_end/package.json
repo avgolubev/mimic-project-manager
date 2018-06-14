@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "it_andrei",
+  "author": "avgolubev",
   "license": "MIT",
   "devDependencies": {
     "babel-preset-env": "^1.2.1",

@@ -1,9 +1,9 @@
 {
   "name": "jira_front_end",
-  "description": "",
+  "description": "simple project manager using jira and local db",
   "main": "app.js",
   "authors": [
-    "it_andrei"
+    "avgolubev"
   ],
   "license": "MIT",
   "homepage": "",
