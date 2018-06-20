@@ -3,7 +3,7 @@ mimic-project-manager
 
 A sample application demonstrating Play Framework using Jira rest api with Apache Derby as DB, 
 Anorm for DB data access.
-Play2-auth is for managing rest api.
+Scalaj-http is for managing rest api.
 Authentication and authorization implemented on play2-auth. 
 
 Used technologies:
