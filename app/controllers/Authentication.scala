@@ -18,7 +18,8 @@ class Authentication @Inject()(
     @NamedDatabase("derby") implicit val db: Database
   , configuration: Configuration) extends Controller with LoginLogout with AuthConfigImpl {
   
-  val jiraAuthURL = configuration.underlying.getString("jira.authURL") //"https://jira.corp.motiv/rest/auth/1/session/"
+  val jiraAuthURL = configuration.underlying.getString("jira.url") + 
+                    configuration.underlying.getString("jira.authPath") //"https://jira.corp/rest/auth/1/session/"
 
   val loginForm = Form {
     mapping("userName" -> nonEmptyText

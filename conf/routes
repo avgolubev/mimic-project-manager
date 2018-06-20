@@ -5,9 +5,9 @@ GET     /issues               controllers.Application.issues
 
 GET     /report/*filter        controllers.Application.report(filter: String)
 
-PUT     /savechanges           controllers.Application.saveChanges
+PUT     /savechanges           controllers.Application.save
 
-PUT     /hideissue             controllers.Application.hideIssue
+PUT     /hideissue             controllers.Application.hide
 
 GET     /login                 controllers.Authentication.login
 

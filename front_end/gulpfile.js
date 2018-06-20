@@ -3,7 +3,7 @@ var sourcemaps = require("gulp-sourcemaps");
 var babel = require("gulp-babel");
 var concat = require("gulp-concat");
 var uglify = require("gulp-uglify");
-var minifyCSS = require("gulp-minify-css");
+var cleanCSS = require("gulp-clean-css");
 var ngAnnotate = require("gulp-ng-annotate")
 var htmlmin = require("gulp-htmlmin");
 var del = require("del");
@@ -48,7 +48,7 @@ gulp.task("css", ["clean"], function () {
   return gulp.src(paths.styles)
     .pipe(sourcemaps.init())
     .pipe(concat("app.css"))
-    .pipe(minifyCSS())
+    .pipe(cleanCSS({ format: 'beautify'}))
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest(paths.css));
 });

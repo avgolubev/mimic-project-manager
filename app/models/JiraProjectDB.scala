@@ -7,8 +7,7 @@ import java.util.Date
 case class IssueDB(task_id: String, start_date: Option[Date], end_date: Option[Date], executors: String, customer: String, ord: String, progress: Int)
 case class IssuesDB(issues: Seq[IssueDB]) 
 
-
-object IssueDB {
+trait DbApi {
     
   def getIssue(task_id: String, fullName: String)(implicit db: Database): IssueDB =     
     db.withConnection { implicit connection =>

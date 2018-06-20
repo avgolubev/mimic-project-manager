@@ -13,7 +13,7 @@
 	<table class="table table-bordered table-hover table-condensed">
 
 	  <caption>
-	    Список задач Jira
+	    Список задач Jira {{$ctrl.jiraUrl}}
 	  </caption>
 
 	  <tr>
@@ -39,9 +39,9 @@
       <th width="5%">скрыть</th>
 	  </tr>
 
-	  <tr ng-repeat="item in $ctrl.items | orderBy:$ctrl.sortItem:$ctrl.reverse track by item.task_id">
+	  <tr ng-repeat="item in $ctrl.data.issues | orderBy:$ctrl.sortItem:$ctrl.reverse track by item.task_id">
 	    <td>{{$index + 1}}</td>
-	    <td><a href="https://jira.corp.motiv/browse/{{item.task_id}}" target="_blank"> {{item.task_id}} </a></td>
+	    <td><a href="{{$ctrl.data.jiraURL}}/browse/{{item.task_id}}" target="_blank"> {{item.task_id}} </a></td>
 	    <td>{{item.title}}</td>
 	    <td>{{item.status}}</td>
 

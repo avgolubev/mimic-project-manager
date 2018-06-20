@@ -19,6 +19,7 @@ libraryDependencies ++= Seq(
   , "org.scalaj"             %% "scalaj-http" 	     % "2.3.0"
   , "com.typesafe.play"      %% "anorm"       	     % "2.5.2"
   , "jp.t2v" 		     %% "play2-auth"  	     % "0.14.2"
+  , "org.apache.derby" % "derby" % "10.14.2.0"
   , "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % "test"
 )
 

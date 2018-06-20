@@ -5,8 +5,6 @@
  
 @(login: String)
  
-
-
 @*
  * Call the `main` template with two arguments. The first
  * argument is a `String` with the title of the page, the second
@@ -14,44 +12,46 @@
  *@
  
 @main("Управление проектами jira.") {
-  
-<div ng-controller='IssuesController as ctrl'>  
+
+<div ng-controller='IssuesController as ctrl'>
+
+	<header class="row" style="margin: 10px 0 0 0">
+	    <div class="form-group narrow-button col-1">
+	    	<button class="btn btn-primary" ng-click="ctrl.refreshIssues();">
+	        	Обновить</button>
+	    </div>
+		<div class="dropdown  col-1" style="margin: 0 10px">
+			<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Экспорт в файл
+			<span class="caret"></span></button>
+			<ul class="dropdown-menu">
+			  <li><a href="#" ng-click="ctrl.exportIssues('all');">Excel(всё)</a></li>
+			  <li><a href="#" ng-click="ctrl.exportIssues('notempty');">Excel(даты не пустые)</a></li>
+			  <li><a href="#">MSPDI (чуть позже)</a></li>
+			</ul>
+		</div>
+		<div class="col-1">{{ctrl.error}}</div>
+		<div class="col-6"></div>
+		<div class="col-2"> @login </div>
+		<div class="col-1">
+		      @helper.form(action = routes.Authentication.logout) {
+		         <p><button type="submit">Выйти</button></p>
+		      }			
+		</div>	
+	</header>
+   
   
   <div class="container-fluid">
 
-    <p>Пользователь @login</p>
-
-    <p>{{ctrl.error}}</p>
-
-    <br>
-    <p>Выход из приложения</p>
-      @helper.form(action = routes.Authentication.logout) {
-         <p>
-           <button type="submit">Выйти</button>
-         </p>
-      }
-
-      <div class="form-group narrow-button">
-        <button class="btn btn-primary" ng-click="ctrl.refreshIssues();">
-          Обновить</button>
-      </div>
-      
-      <div class="checkbox">
-        <label><input type="checkbox" ng-model="ctrl.showAll" value=""> Показывать задачи в статусе «Закрыта», скрытые после экспорта. </label>
-      </div>
-     <div class="dropdown">
-      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Экспорт в файл
-      <span class="caret"></span></button>
-      <ul class="dropdown-menu">
-        <li><a href="#" ng-click="ctrl.exportIssues('all');">Excel(всё)</a></li>
-        <li><a href="#" ng-click="ctrl.exportIssues('notempty');">Excel(даты не пустые)</a></li>
-        <li><a href="#">MSPDI (чуть позже)</a></li>
-      </ul>
-    </div>   
+	<div class="checkbox">
+	  <label><input type="checkbox" ng-model="ctrl.showAll" value=""> Показывать задачи в статусе «Закрыта», скрытые после экспорта. </label>
+	</div>
+         
   </div>	
+  
   <br>
+  
   <div class="container-fluid">  
-    <issues-table items="ctrl.getIssues().issues" 
+    <issues-table data="ctrl.getIssues()"
 		  on-changes="ctrl.prepareChanges(task_id, field, data)" 
 		  on-cancel="ctrl.cancelChanges()"
 		  on-save="ctrl.saveChanges()" 

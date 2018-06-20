@@ -32,19 +32,19 @@ function IssuesService($http, $window, get_issues_URL, save_issues_URL, get_repo
     return $http.get(get_issues_URL)
     .then(
   		(response) => {
-        response.data.issues.forEach( issue => {
-          if(issue.start_date != null)
-            issue.start_date = new Date(issue.start_date);
-          if(issue.end_date != null)
-            issue.end_date = new Date(issue.end_date);
-        });
+	        response.data.issues.forEach( issue => {
+	          if(issue.start_date != null)
+	            issue.start_date = new Date(issue.start_date);
+	          if(issue.end_date != null)
+	            issue.end_date = new Date(issue.end_date);
+	        });
 
-  		  srv.issues = response.data;
-        srv.issuesClone = angular.copy(srv.issues);
-  		  return {};
+	  		srv.issues = response.data;
+	        srv.issuesClone = angular.copy(srv.issues);
+	  		return {};
   		},
   		(response) => {
-        $window.location.href = '/login'
+  			$window.location.href = '/login';
   			return response.data.error;
   		}
     );
