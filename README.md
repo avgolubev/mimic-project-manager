@@ -11,8 +11,8 @@ Used technologies:
 * Play Framework 2.5.3
 * Scala 2.11.8
 * Anorm 2.5.2
-* play2-auth 0.14.2
-* scalaj-http 2.3.0
+* Play2-auth 0.14.2
+* Scalaj-http 2.3.0
 
 
 For correct working Apache Derby add 
