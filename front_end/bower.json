@@ -18,6 +18,8 @@
     "angular": "latest",
     "angular-xeditable": "latest",
     "angular-bootstrap": "latest",
-    "bootstrap": "latest"
+    "bootstrap": "latest",
+    "popper.js": "^1.14.3",
+    "jquery": "^3.3.1"
   }
 }

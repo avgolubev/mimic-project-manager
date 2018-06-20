@@ -15,9 +15,9 @@ import java.util.logging.{Level, Logger}
 
 import views.html._
 import models._
-import utils._
 
 import jp.t2v.lab.play2.auth.AuthElement
+import scala.concurrent.Future
 import play.api.inject.ApplicationLifecycle
 
 import anorm.{ Macro, RowParser, SQL, SqlParser, ToStatement, sqlToSimple, BatchSql, NamedParameter }
@@ -27,14 +27,22 @@ import scala.util.{Try, Success, Failure}
 
 @Singleton
 class Application @Inject()(
-    @NamedDatabase("derby") implicit val derby: Database
-  , configuration: Configuration) extends Controller with AuthElement  with AuthConfigImpl with ConsolidatingTrait{
+    @NamedDatabase("derby") implicit val derby: Database, configuration: Configuration, lifecycle: ApplicationLifecycle) 
+    extends Controller with AuthElement  with AuthConfigImpl with ConsolidatingTrait{
 
-  val jiraURL           = configuration.underlying.getString("jira.url")          //"https://jira.corp"
-  val jiraSearchPath    = configuration.underlying.getString("jira.searchPath")    //"/rest/api/2/search"
-  val jiraSavePath      = configuration.underlying.getString("jira.savePath")      //"/rest/api/2/issue/"
-  val jasperReportFile  = configuration.underlying.getString("jasper.reportFile") //"reports/excel_report.jasper"
+  val jiraURL           = configuration.underlying.getString("jira.url")         
+  val jiraSearchPath    = configuration.underlying.getString("jira.searchPath")  
+  val jiraSavePath      = configuration.underlying.getString("jira.savePath")    
+  val jasperReportFile  = configuration.underlying.getString("jasper.reportFile")
   val pairJiraURL       = ("jiraURL", JsString(jiraURL))
+  
+  lifecycle.addStopHook { () =>
+    Future.successful{
+      println("stopping apache derby") 
+      java.sql.DriverManager.getConnection("jdbc:derby:;shutdown=true")
+    }
+  }
+       
 
   def index = StackAction(AuthorityKey -> NormalUser) { implicit request =>
     Ok(views.html.index(loggedIn.userName))
@@ -44,10 +52,6 @@ class Application @Inject()(
     val jsonIssues = getJsonIssues(loggedIn.userName, loggedIn.jiraCookies, jiraURL + jiraSearchPath).as[JsObject] + pairJiraURL
     Ok(jsonIssues)
   }
-
-  implicit val dateReadsISO8601UTCtoLocal = Reads.dateReads("yyyy-MM-dd'T'HH:mm:ss.SSSX")
-  implicit val issueDBReader  = Json.reads[IssueDB]
-  implicit val issuesDBReader = Json.reads[IssuesDB]
 
   def save = StackAction(BodyParsers.parse.json[Seq[IssueDB]], AuthorityKey -> NormalUser) { implicit request =>
     val issues = IssuesDB(request.body)

@@ -94,8 +94,5 @@ trait DbApi {
             case _ => false
           }                          
     }    
-    
-    //import java.sql.DriverManager
-    //DriverManager.getConnection("jdbc:derby:;shutdown=true")
-  
+      
 }

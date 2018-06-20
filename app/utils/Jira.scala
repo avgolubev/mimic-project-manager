@@ -266,7 +266,7 @@ trait Jira extends JiraParseResponse {
   }
   
   def getReport(filter: String, userName: String, myCookies: Cookies, jiraSearchURL: String, jasperReportFile: String)(implicit db: Database): Array[Byte] = {
-                                  
+                              
     def formatDate(date: Option[Date]) = {      
       import java.text.SimpleDateFormat
       val formater = new SimpleDateFormat("dd.MM.yyyy")
@@ -325,7 +325,7 @@ trait Jira extends JiraParseResponse {
     toByteArray(jasperReportFile, issuesMapArray)            
   }
   
-  def toByteArray(jasperReportLayout: String, data: Array[Object]): Array[Byte] = {        
+  private def toByteArray(jasperReportLayout: String, data: Array[Object]): Array[Byte] = {        
     val parameters: java.util.Map[String, Object] = new java.util.HashMap()  
     val jasperPrint = JasperFillManager.fillReport(jasperReportLayout
                                                  , parameters
