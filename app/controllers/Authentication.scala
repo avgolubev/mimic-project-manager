@@ -11,15 +11,11 @@ import models._
 import views.html._
 import play.api.cache.CacheApi
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.db.{ Database, NamedDatabase }
 
-
-class Authentication @Inject()(
-    @NamedDatabase("derby") implicit val db: Database
-  , configuration: Configuration) extends Controller with LoginLogout with AuthConfigImpl {
+class Authentication @Inject()(configuration: Configuration) extends Controller with LoginLogout with AuthConfigImpl {
   
   val jiraAuthURL = configuration.underlying.getString("jira.url") + 
-                    configuration.underlying.getString("jira.authPath") //"https://jira.corp/rest/auth/1/session/"
+                    configuration.underlying.getString("jira.authPath")
 
   val loginForm = Form {
     mapping("userName" -> nonEmptyText

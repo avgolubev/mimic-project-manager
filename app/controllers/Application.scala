@@ -28,22 +28,21 @@ import scala.util.{Try, Success, Failure}
 @Singleton
 class Application @Inject()(
     @NamedDatabase("derby") implicit val derby: Database, configuration: Configuration, lifecycle: ApplicationLifecycle) 
-    extends Controller with AuthElement  with AuthConfigImpl with ConsolidatingTrait{
+    extends Controller with AuthElement  with AuthConfigImpl with ConsolidatingTrait {
 
-  val jiraURL           = configuration.underlying.getString("jira.url")         
-  val jiraSearchPath    = configuration.underlying.getString("jira.searchPath")  
-  val jiraSavePath      = configuration.underlying.getString("jira.savePath")    
-  val jasperReportFile  = configuration.underlying.getString("jasper.reportFile")
-  val pairJiraURL       = ("jiraURL", JsString(jiraURL))
-  
   lifecycle.addStopHook { () =>
     Future.successful{
       println("stopping apache derby") 
       java.sql.DriverManager.getConnection("jdbc:derby:;shutdown=true")
     }
-  }
-       
-
+  }  
+  
+  val jiraURL           = configuration.underlying.getString("jira.url")         
+  val jiraSearchPath    = configuration.underlying.getString("jira.searchPath")  
+  val jiraSavePath      = configuration.underlying.getString("jira.savePath")    
+  val jasperReportFile  = configuration.underlying.getString("jasper.reportFile")
+  val pairJiraURL       = ("jiraURL", JsString(jiraURL))
+         
   def index = StackAction(AuthorityKey -> NormalUser) { implicit request =>
     Ok(views.html.index(loggedIn.userName))
   }

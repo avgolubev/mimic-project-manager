@@ -46,6 +46,7 @@ case class JiraIssue(task_id:  String
 
 
 trait JiraParseResponse {
+  
   def getErrorMessage(str: String): String = {      
     val json: JsValue = Json.parse(str)           
     val arr  = (json \ "errorMessages").asOpt[JsValue]     
@@ -53,7 +54,8 @@ trait JiraParseResponse {
       case Some(JsArray(value)) => ( value map( _.as[String] )) mkString("; ")
       case _ => "Unauthorized"
     }    
-  }  
+  }
+  
 }
                    
 trait JiraAuth extends JiraParseResponse {
@@ -67,13 +69,14 @@ trait JiraAuth extends JiraParseResponse {
                        .header("Content-Type", "application/json")
                        .header("Charset", "UTF-8")
                        .option(HttpOptions.readTimeout(5000)).asString
-                      
-      if(authResult.isSuccess)
-        Right(authResult.cookies)
+                                       
+      if(authResult.isSuccess) {
+        Right(authResult.cookies)        
+      }  
       else 
         Left(
-          if(authResult.code == 503) getErrorMessage(authResult.body)
-          else "Service Unavailable"
+          if(authResult.code == 503) "Service Unavailable"
+          else getErrorMessage(authResult.body)
         ) 
       
     } catch {
@@ -265,7 +268,8 @@ trait Jira extends JiraParseResponse {
     Json.toJson(getIssues(userName, myCookies, jiraSearchURL))
   }
   
-  def getReport(filter: String, userName: String, myCookies: Cookies, jiraSearchURL: String, jasperReportFile: String)(implicit db: Database): Array[Byte] = {
+  def getReport(filter: String, userName: String, myCookies: Cookies, jiraSearchURL: String
+      , jasperReportFile: String)(implicit db: Database): Array[Byte] = {
                               
     def formatDate(date: Option[Date]) = {      
       import java.text.SimpleDateFormat
