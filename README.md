@@ -20,6 +20,5 @@ permission org.apache.derby.security.SystemPermission "engine", "usederbyinterna
 in jdk/jre/lib/security/java.policy file.
 
 To build front-end:
-
-cd front-end
-gulp
+`cd front-end`
+`gulp`
