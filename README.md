@@ -18,3 +18,9 @@ Used technologies:
 For correct working Apache Derby add 
 permission org.apache.derby.security.SystemPermission "engine", "usederbyinternals";
 in jdk/jre/lib/security/java.policy file.
+
+To build front-end:
+```
+cd front-end
+gulp
+```
