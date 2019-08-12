@@ -3,16 +3,15 @@ package models
 import scala.concurrent.{Future}
 import play.api.cache._
 import javax.inject.Inject
-import utils._
-import play.api.db.Database
+import utils.JiraAuth
 
 case class Account (userName: String, role: Role, jiraCookies: Cookies) 
 
-object Account {
+object Account extends JiraAuth {
   
-  def authenticate(userName: String, password: String, jiraAuthURL: String)(implicit db: Database): Option[Account] = {
+  def authenticate(userName: String, password: String, jiraAuthURL: String): Option[Account] = {
     
-    Jira.authenticate(userName, password, jiraAuthURL) match {
+    authenticateHttps(userName, password, jiraAuthURL) match {
       case Left(error) => {
         println(error)
         None

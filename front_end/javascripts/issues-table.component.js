@@ -6,7 +6,7 @@ angular.module('app')
 .component('issuesTable', {
   templateUrl: 'assets/issues-table.html',
   bindings: {
-    items: '<'
+    data: '<'
    ,onChanges: '&'
    ,onCancel:  '&'
    ,onSave:    '&'

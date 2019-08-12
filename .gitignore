@@ -9,3 +9,8 @@ target
 .DS_Store
 /.DS_Store
 /bin/
+bower_components
+node_modules
+package-lock.json
+resources
+derby.log

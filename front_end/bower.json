@@ -1,9 +1,9 @@
 {
   "name": "jira_front_end",
-  "description": "",
+  "description": "simple project manager using jira and local db",
   "main": "app.js",
   "authors": [
-    "it_andrei"
+    "avgolubev"
   ],
   "license": "MIT",
   "homepage": "",
@@ -18,6 +18,8 @@
     "angular": "latest",
     "angular-xeditable": "latest",
     "angular-bootstrap": "latest",
-    "bootstrap": "latest"
+    "bootstrap": "latest",
+    "popper.js": "^1.14.3",
+    "jquery": "^3.3.1"
   }
 }

@@ -44,23 +44,72 @@ case class JiraIssue(task_id:  String
                    , end_date: Option[Date]
                    , duration: Option[Int])
 
-object Jira {
+
+trait JiraParseResponse {
   
-  ignoreCerts() // вызывается один раз при первом обращении к object Jira
-              
-  def authenticate(userName: String, password: String, jiraAuthURL: String): Either[String, Cookies] = {    
-    val authResult = Http(jiraAuthURL)
-                     .postData(s"""{"username":"$userName","password":"$password"}""")
-                     .header("Content-Type", "application/json")
-                     .header("Charset", "UTF-8")
-                     .option(HttpOptions.readTimeout(5000)).asString
-                    
-    if(authResult.isSuccess)
-      Right(authResult.cookies)
-    else 
-      Left(getErrorMessage(authResult.body))
+  def getErrorMessage(str: String): String = {      
+    val json: JsValue = Json.parse(str)           
+    val arr  = (json \ "errorMessages").asOpt[JsValue]     
+    arr match {      
+      case Some(JsArray(value)) => ( value map( _.as[String] )) mkString("; ")
+      case _ => "Unauthorized"
+    }    
   }
   
+}
+                   
+trait JiraAuth extends JiraParseResponse {
+  
+  ignoreCerts() // вызывается один раз при первом обращении к object Jira
+  
+  def authenticateHttps (userName: String, password: String, jiraAuthURL: String): Either[String, Cookies] = {
+    try{
+      val authResult = Http(jiraAuthURL)
+                       .postData(s"""{"username":"$userName","password":"$password"}""")
+                       .header("Content-Type", "application/json")
+                       .header("Charset", "UTF-8")
+                       .option(HttpOptions.readTimeout(5000)).asString
+                                       
+      if(authResult.isSuccess) {
+        Right(authResult.cookies)        
+      }  
+      else 
+        Left(
+          if(authResult.code == 503) "Service Unavailable"
+          else getErrorMessage(authResult.body)
+        ) 
+      
+    } catch {
+      case all: Throwable => Left(all.toString())
+    }
+  }
+  
+  def ignoreCerts() {
+    val trustAllCerts: Array[TrustManager] = Array(
+                  new X509TrustManager() {
+                    def getAcceptedIssuers(): Array[X509Certificate] = {null}
+                    def checkClientTrusted(certs: Array[X509Certificate], authType: String): Unit = {}
+                    def checkServerTrusted(certs: Array[X509Certificate], authType: String): Unit = {}
+                })            
+        
+    val sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+ 
+        // Create all-trusting host name verifier
+        val allHostsValid = new HostnameVerifier() {
+              def verify(hostname: String, session: SSLSession) = {
+                true;
+            }
+        };
+ 
+        // Install the all-trusting host verifier
+    HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid)    
+  }  
+}
+                   
+trait Jira extends JiraParseResponse {
+                 
   def saveIssues(issues: IssuesDB, myCookies: Cookies, jiraSaveURL: String) = {
       val sdf = new java.text.SimpleDateFormat("yyyy-MM-dd")
       
@@ -102,8 +151,8 @@ object Jira {
   
   def getIssues(userName: String, myCookies: Cookies, jiraSearchURL: String)(implicit db: Database): Issues = {
     /*
-    {user : "", name : "", issues : [{issue : IS-1234, title : "", status : ""}, {...}, ...], error : ""}
-    table issues : {issue, start_date, end_date, user_names, contact, ord}   
+      {user : "", name : "", issues : [{issue : IS-1234, title : "", status : ""}, {...}, ...], error : ""}
+      table issues : {issue, start_date, end_date, user_names, contact, ord}   
     */   
 	        
     val issuesResult = Http(jiraSearchURL)
@@ -150,9 +199,9 @@ object Jira {
             }
         
       val seqIssue = seqJiraIssue
-        .filter { x => IssueDB.inReport(x.task_id) }
+        .filter { x => inReportDB(x.task_id) }
         .map { v =>              
-              IssueDB.getIssue(v.task_id, name) match {
+              getIssueDB(v.task_id, name) match {
                 case IssueDB(_, start_date, end_date, executors, customer, ord, progress) =>
                   Issue(v.task_id
                       , v.title
@@ -170,6 +219,9 @@ object Jira {
     else
       Issues("", "", Seq(), getErrorMessage(issuesResult.body))      
   }
+  
+  def getIssueDB(task_id: String, fullName: String)(implicit db: Database): IssueDB
+  def inReportDB(task_id: String)(implicit db: Database): Boolean
   
   def jiraDurationToDays(jiraDur: String) = { 
         
@@ -216,8 +268,9 @@ object Jira {
     Json.toJson(getIssues(userName, myCookies, jiraSearchURL))
   }
   
-  def getReport(filter: String, userName: String, myCookies: Cookies, jiraSearchURL: String, jasperReportFile: String)(implicit db: Database): Array[Byte] = {
-                                  
+  def getReport(filter: String, userName: String, myCookies: Cookies, jiraSearchURL: String
+      , jasperReportFile: String)(implicit db: Database): Array[Byte] = {
+                              
     def formatDate(date: Option[Date]) = {      
       import java.text.SimpleDateFormat
       val formater = new SimpleDateFormat("dd.MM.yyyy")
@@ -276,7 +329,7 @@ object Jira {
     toByteArray(jasperReportFile, issuesMapArray)            
   }
   
-  def toByteArray(jasperReportLayout: String, data: Array[Object]): Array[Byte] = {        
+  private def toByteArray(jasperReportLayout: String, data: Array[Object]): Array[Byte] = {        
     val parameters: java.util.Map[String, Object] = new java.util.HashMap()  
     val jasperPrint = JasperFillManager.fillReport(jasperReportLayout
                                                  , parameters
@@ -309,38 +362,5 @@ object Jira {
       }
       result            
   }  
-  
-  def getErrorMessage(str: String): String = {      
-    val json: JsValue = Json.parse(str)           
-    val arr  = (json \ "errorMessages").asOpt[JsValue]     
-    arr match {      
-      case Some(JsArray(value)) => ( value map( _.as[String] )) mkString("; ")
-      case _ => "Unauthorized"
-    }    
-  }    
-  
-  def ignoreCerts() {
-    val trustAllCerts: Array[TrustManager] = Array(
-                  new X509TrustManager() {
-                    def getAcceptedIssuers(): Array[X509Certificate] = {null}
-                    def checkClientTrusted(certs: Array[X509Certificate], authType: String): Unit = {}
-                    def checkServerTrusted(certs: Array[X509Certificate], authType: String): Unit = {}
-                })            
-        
-    val sc = SSLContext.getInstance("SSL");
-        sc.init(null, trustAllCerts, new java.security.SecureRandom());
-        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
- 
-        // Create all-trusting host name verifier
-        val allHostsValid = new HostnameVerifier() {
-              def verify(hostname: String, session: SSLSession) = {
-                true;
-            }
-        };
- 
-        // Install the all-trusting host verifier
-    HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid)    
-  }  
-  
-  
+           
 }

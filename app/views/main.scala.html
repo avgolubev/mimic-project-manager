@@ -17,18 +17,19 @@
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
     </head>
     <body>
+      	  
+	  <div class="container">      	        
+      	@content
+      </div>
       
-      <script src="@routes.Assets.at("javascripts/lib/jquery.min.js")"></script>   
-      <script src="@routes.Assets.at("javascripts/lib/bootstrap.min.js")"></script>   
+      <script src="@routes.Assets.at("javascripts/lib/jquery.slim.min.js")"></script>   
+      <script src="@routes.Assets.at("javascripts/lib/popper.min.js")"></script>   
+      <script src="@routes.Assets.at("javascripts/lib/bootstrap.min.js")"></script>      
       <script src="@routes.Assets.at("javascripts/lib/angular.min.js")"></script>   
       <script src="@routes.Assets.at("javascripts/lib/xeditable.min.js")"></script>
       <script src="@routes.Assets.at("javascripts/lib/ui-bootstrap-tpls.min.js")"></script>
 
-
-      <script src="@routes.Assets.at("javascripts/app.js")"></script>
-	    
-	    
-	        
-      @content
+      <script src="@routes.Assets.at("javascripts/app.js")"></script>      
+      
     </body>
 </html>

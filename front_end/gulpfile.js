@@ -3,7 +3,7 @@ var sourcemaps = require("gulp-sourcemaps");
 var babel = require("gulp-babel");
 var concat = require("gulp-concat");
 var uglify = require("gulp-uglify");
-var minifyCSS = require("gulp-minify-css");
+var cleanCSS = require("gulp-clean-css");
 var ngAnnotate = require("gulp-ng-annotate")
 var htmlmin = require("gulp-htmlmin");
 var del = require("del");
@@ -11,8 +11,9 @@ var del = require("del");
 var paths = {
   scripts: "javascripts/**/*",
   html: "html/**/*",
-  bower_components_js: ["bower_components/jquery/dist/jquery.min.js"
+  bower_components_js: ["bower_components/jquery/dist/jquery.slim.min.js"
 		      , "bower_components/angular/angular.min.js"
+		      , "bower_components/popper.js/dist/umd/popper.min.js"
 		      , "bower_components/bootstrap/dist/js/bootstrap.min.js"
 		      , "bower_components/angular-xeditable/dist/js/xeditable.min.js"
 		      , "bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"],
@@ -48,7 +49,7 @@ gulp.task("css", ["clean"], function () {
   return gulp.src(paths.styles)
     .pipe(sourcemaps.init())
     .pipe(concat("app.css"))
-    .pipe(minifyCSS())
+    .pipe(cleanCSS({ format: 'beautify'}))
     .pipe(sourcemaps.write("."))
     .pipe(gulp.dest(paths.css));
 });
