@@ -8,7 +8,7 @@ scalaVersion := "2.11.8"
 
 organization := "avgolubev"
 
-scalacOptions ++= Seq("-unchecked", "-deprecation")
+scalacOptions ++= Seq("-encoding", "utf8", "-Xfatal-warnings", "-deprecation", "-unchecked")
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 
